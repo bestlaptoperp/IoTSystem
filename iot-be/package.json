@@ -11,9 +11,9 @@
     "typecheck": "tsc --noEmit",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:seed": "prisma db seed"
+    "db:seed": "node prisma/seed/seed.js"
   },
-  "prisma": { "seed": "tsx prisma/seed/seed.ts" },
+  "prisma": { "seed": "node prisma/seed/seed.js" },
   "keywords": [],
   "author": "",
   "license": "ISC",

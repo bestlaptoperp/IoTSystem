@@ -1,0 +1,27 @@
+# =============================================================================
+# Caddyfile - Reverse Proxy & Automatic HTTPS
+# =============================================================================
+
+{$DOMAIN} {
+    encode gzip zstd
+
+    # API Backend (Express.js)
+    handle /api/* {
+        reverse_proxy api:3001 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Frontend (Next.js Standalone)
+    handle {
+        reverse_proxy web:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+}
