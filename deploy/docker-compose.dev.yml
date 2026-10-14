@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: iot
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: iot
+    ports: [ "5435:5432" ]
+    volumes: [ "pgdata:/var/lib/postgresql/data" ]
+volumes:
+  pgdata:

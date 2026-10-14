@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  VIEWER
+}
+
+enum Transport {
+  WIFI
+  LORA
+}
+
+enum PowerStatus {
+  SAFE
+  MEDIUM
+  CRITICAL
+}
+
+enum CommandType {
+  RESTART
+  SET_SLEEP
+  UPDATE_WIFI
+}
+
+enum CommandStatus {
+  PENDING
+  DELIVERED
+  EXPIRED
+  CANCELLED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(VIEWER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Device {
+  id         String    @id @default(uuid())
+  code       String    @unique // Contoh: esp32c3-01
+  name       String
+  transport  Transport @default(WIFI)
+  keyHash    String // SHA-256 dari kunci perangkat (hex)
+  wifiSsid   String?
+  lastSeenAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  readings Reading[]
+  commands Command[]
+}
+
+model Reading {
+  id          Int         @id @default(autoincrement())
+  deviceId    String
+  device      Device      @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  receivedAt  DateTime    @default(now())
+  vcap        Float
+  status      PowerStatus
+  predictedV  Float?
+  sleepS      Int?
+  resetReason String?
+  bootCount   Int?
+  wifiMs      Int?
+  activeMs    Int?
+  wifiSsid    String?
+
+  @@index([deviceId, receivedAt])
+}
+
+model Command {
+  id          String        @id @default(uuid())
+  deviceId    String
+  device      Device        @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  type        CommandType
+  payload     Json?
+  status      CommandStatus @default(PENDING)
+  expiresAt   DateTime
+  createdById String?
+  createdAt   DateTime      @default(now())
+  deliveredAt DateTime?
+
+  @@index([deviceId, status])
+}
