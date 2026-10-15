@@ -19,7 +19,7 @@ export class AuthController {
       const token = jwt.sign({ sub: user.id, role: user.role }, env.JWT_SECRET, { expiresIn: '7d' })
       res.cookie('token', token, {
         httpOnly: true,
-        secure: env.NODE_ENV === 'production',
+        secure: env.COOKIE_SECURE !== undefined ? env.COOKIE_SECURE : env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: COOKIE_MAX_AGE,
         path: '/',

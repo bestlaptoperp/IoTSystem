@@ -1,8 +1,8 @@
 # =============================================================================
-# Caddyfile - Reverse Proxy & Automatic HTTPS
+# Caddyfile - Reverse Proxy HTTP (Port 80)
 # =============================================================================
 
-{$DOMAIN} {
+:80 {
     encode gzip zstd
 
     # API Backend (Express.js)

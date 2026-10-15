@@ -7,6 +7,10 @@ const EnvSchema = z.object({
   DATABASE_URL: z.string().min(1),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET minimal 32 karakter'),
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
+  COOKIE_SECURE: z
+    .string()
+    .optional()
+    .transform((val) => val === 'true'),
 })
 
 export const env = EnvSchema.parse(process.env)
